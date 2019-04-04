@@ -47,6 +47,16 @@ context "Using ngrok", ngrok: true do
 end
 ```
 
+For HTTPS connections write specs using filter ngrok_https: true
+
+```ruby
+context "Using ngrok", ngrok_https: true do
+  it "should use ngrok tunnel" do
+    # your test code
+  end
+end
+```
+
 Custom tunnel options available:
 
 ```ruby
@@ -60,6 +70,9 @@ Ngrok::Rspec.tunnel = {
 }
 ```
 
+## Note
+
+`Capybara.always_include_port` is set to `false` for specs using `ngrok-rspec`
 
 ## Contributing
 
