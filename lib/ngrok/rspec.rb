@@ -25,6 +25,17 @@ module Ngrok
           Capybara.app_host = Ngrok::Rspec::original_app_host
         end
 
+        config.around(:each, ngrok_https: true) do |example|
+          raise UnknownServerPort, "Define Capybara.server_port in RSpec.config" unless Capybara.server_port
+          Ngrok::Tunnel.start(Ngrok::Rspec.tunnel) unless Ngrok::Tunnel.running?
+
+          Capybara.app_host = Ngrok::Tunnel.ngrok_url_https
+
+          example.run
+
+          Capybara.app_host = Ngrok::Rspec::original_app_host
+        end
+
         config.after(:suite) do
           Ngrok::Tunnel.stop if Ngrok::Tunnel.running?
         end
