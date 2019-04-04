@@ -11,6 +11,7 @@ module Ngrok
     def self.included(base)
 
       Ngrok::Rspec.original_app_host = Capybara.app_host
+      original_always_include_port = Capybara.always_include_port
 
       ::RSpec.configure do |config|
 
@@ -18,10 +19,13 @@ module Ngrok
           raise UnknownServerPort, "Define Capybara.server_port in RSpec.config" unless Capybara.server_port
           Ngrok::Tunnel.start(Ngrok::Rspec.tunnel) unless Ngrok::Tunnel.running?
 
+          Capybara.always_include_port = false
+
           Capybara.app_host = Ngrok::Tunnel.ngrok_url
 
           example.run
 
+          Capybara.always_include_port = original_always_include_port
           Capybara.app_host = Ngrok::Rspec::original_app_host
         end
 
@@ -29,10 +33,13 @@ module Ngrok
           raise UnknownServerPort, "Define Capybara.server_port in RSpec.config" unless Capybara.server_port
           Ngrok::Tunnel.start(Ngrok::Rspec.tunnel) unless Ngrok::Tunnel.running?
 
+          Capybara.always_include_port = false
+
           Capybara.app_host = Ngrok::Tunnel.ngrok_url_https
 
           example.run
 
+          Capybara.always_include_port = original_always_include_port
           Capybara.app_host = Ngrok::Rspec::original_app_host
         end
 
